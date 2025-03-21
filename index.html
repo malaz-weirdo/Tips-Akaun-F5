@@ -20,10 +20,16 @@
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
 
-        const images = ["airel4.png", "airel5.png", "airel6.png"]; // Replace with your image files
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        resizeCanvas();
+        window.addEventListener("resize", resizeCanvas);
+
+        const images = ["airel4.png", "airel5.png", "airel6.png"];
         let objects = [];
 
         class MovingImage {
@@ -36,6 +42,11 @@
                 this.speedY = speedY;
                 this.width = 100;
                 this.height = 100;
+                this.loaded = false;
+
+                this.image.onload = () => {
+                    this.loaded = true;
+                };
             }
 
             update() {
@@ -46,12 +57,20 @@
             }
 
             draw() {
-                ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+                if (this.loaded) {
+                    ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+                }
             }
         }
 
-        images.forEach((src, index) => {
-            objects.push(new MovingImage(src, Math.random() * canvas.width, Math.random() * canvas.height, (Math.random() * 4) + 2, (Math.random() * 4) + 2));
+        images.forEach(src => {
+            objects.push(new MovingImage(
+                src,
+                Math.random() * (canvas.width - 100), 
+                Math.random() * (canvas.height - 100), 
+                (Math.random() * 2) + 1, 
+                (Math.random() * 2) + 1
+            ));
         });
 
         function gameLoop() {
@@ -67,4 +86,3 @@
     </script>
 </body>
 </html>
-    
